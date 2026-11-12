@@ -20,6 +20,7 @@ test.describe('exam entry without login', () => {
     const { headers } = await apiLogin(req, 'quanly');
     await req.put(`/api/exams/${id}`, { data: { name: examName, durationMinutes: 15, passingScore: 50, randomizeQuestions: true, randomizeOptions: true, maxAttempts: 1, resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT', publicAccess: false }, headers });
     await req.post(`/api/exams/${id}/status`, { data: { status: 'CLOSED' }, headers });
+    await req.post(`/api/exams/${id}/status`, { data: { status: 'ARCHIVED' }, headers });
     await req.dispose();
   });
 

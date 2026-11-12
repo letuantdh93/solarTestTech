@@ -23,6 +23,17 @@ The Prisma client is generated automatically on `pnpm install` (postinstall) and
 
 All `pnpm` commands (`db:deploy`, `db:seed`, `start`, …) read the **project-root `.env`** automatically through `apps/server/scripts/with-env.mjs`. Variables already set in the shell take precedence. If `DATABASE_URL` is missing, the command stops with an explanatory message.
 
+### Shipping examinations with the code
+
+`pnpm db:seed` also recreates the examinations listed in `apps/server/prisma/seed/exams.json`: the same codes, status (published/draft), settings, question order and group/user assignments. Exams whose code already exists are left untouched, so the seed is safe to re-run. Attempts and results are never copied. To refresh the file from the reference (dev) database, run:
+
+```bash
+pnpm db:export-exams        # exports PUBLISHED + DRAFT exams (skips E2E test and DT-DEMO exams)
+git add apps/server/prisma/seed/exams.json && git commit -m "Update exported exams"
+```
+
+On the server: `git pull && pnpm install && pnpm db:deploy && pnpm db:seed && pnpm build && pnpm start`.
+
 ### Server with another PostgreSQL already on port 5432
 
 The bundled database publishes `127.0.0.1:${DB_PORT}` (default 5544) and never uses the host's 5432. Inside Docker, the `app` service always connects to `db:5432`; that port is internal to the container network, so do not change it. To use your **existing** PostgreSQL instead, skip `pnpm db:up` and point `DATABASE_URL` at it. The user needs permission to create the `pg_trgm` extension, or the extension must be created beforehand.

@@ -18,6 +18,15 @@ test.describe('candidate examination flow', () => {
     await req.dispose();
   });
 
+  test.afterAll(async ({ baseURL }) => {
+    // Leave no published test exams behind (close → archive keeps attempt history intact)
+    const req = await request.newContext({ baseURL });
+    const { headers } = await apiLogin(req, 'quanly');
+    await req.post(`/api/exams/${examId}/status`, { data: { status: 'CLOSED' }, headers });
+    await req.post(`/api/exams/${examId}/status`, { data: { status: 'ARCHIVED' }, headers });
+    await req.dispose();
+  });
+
   test('take an exam on mobile with reduced motion: autosave, flag, navigate, reload, submit, see result', async ({ browser }) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce', isMobile: true, hasTouch: true });
     const page = await ctx.newPage();

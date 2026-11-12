@@ -7,6 +7,7 @@ import { DEFAULT_ROLE_PERMISSIONS, PERMISSIONS, ROLE_CODES, checkQuestionQuality
 import { hashPassword } from '../src/lib/password';
 import { TAXONOMY, PERMISSION_LABELS, ROLE_LABELS, DEFAULT_TEMPLATE_DISTRIBUTION, DEFAULT_DIFFICULTY_DISTRIBUTION } from './seed/taxonomy';
 import { SEED_QUESTIONS } from './seed/questions';
+import { importExams } from './seed/import-exams';
 
 const prisma = new PrismaClient();
 
@@ -176,7 +177,9 @@ async function main() {
     });
     created++;
   }
-  console.log(`Seed hoàn tất: ${TAXONOMY.length} danh mục, ${users.length} người dùng, ${created} câu hỏi mới (tổng mẫu ${SEED_QUESTIONS.length}).`);
+  // Examinations exported from the reference environment (pnpm db:export-exams)
+  const ex = await importExams(prisma);
+  console.log(`Seed hoàn tất: ${TAXONOMY.length} danh mục, ${users.length} người dùng, ${created} câu hỏi mới (tổng mẫu ${SEED_QUESTIONS.length}), ${ex.created} đề thi mới (${ex.skipped} đề đã có).`);
 }
 
 main()

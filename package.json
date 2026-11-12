@@ -16,7 +16,8 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "db:seed-demo": "pnpm --filter @solar/server seed:demo",
-    "db:generate": "pnpm --filter @solar/server prisma:generate"
+    "db:generate": "pnpm --filter @solar/server prisma:generate",
+    "db:export-exams": "pnpm --filter @solar/server export:exams"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.0"

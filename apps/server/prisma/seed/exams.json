@@ -1,0 +1,626 @@
+{
+  "exportedAt": "2026-11-12T04:55:57.802Z",
+  "exams": [
+    {
+      "code": "DT-2026-0001",
+      "name": "Sát hạch kỹ sư thiết kế PV – Đợt 1",
+      "description": null,
+      "targetAudience": null,
+      "examCategory": null,
+      "status": "PUBLISHED",
+      "durationMinutes": 75,
+      "passingScore": 70,
+      "randomizeQuestions": true,
+      "randomizeOptions": true,
+      "maxAttempts": 1,
+      "publicAccess": false,
+      "startAt": null,
+      "endAt": null,
+      "resultVisibility": "DETAILED",
+      "explanationVisibility": "AFTER_SUBMIT",
+      "blueprint": "Mẫu đề chuẩn 30 câu – Kỹ sư PV",
+      "createdBy": "quanly",
+      "generationConfig": {
+        "minScenario": 4,
+        "maxPerConcept": 1,
+        "questionTypes": [
+          "SINGLE_CHOICE",
+          "MULTIPLE_CHOICE",
+          "TRUE_FALSE",
+          "NUMERIC"
+        ],
+        "minCalculation": 8,
+        "totalQuestions": 30,
+        "targetCompetency": "",
+        "categoryDistribution": [
+          {
+            "categoryCode": "A",
+            "count": 3
+          },
+          {
+            "categoryCode": "B",
+            "count": 2
+          },
+          {
+            "categoryCode": "C",
+            "count": 5
+          },
+          {
+            "categoryCode": "D",
+            "count": 3
+          },
+          {
+            "categoryCode": "E",
+            "count": 5
+          },
+          {
+            "categoryCode": "F",
+            "count": 4
+          },
+          {
+            "categoryCode": "G",
+            "count": 3
+          },
+          {
+            "categoryCode": "H",
+            "count": 2
+          },
+          {
+            "categoryCode": "I",
+            "count": 1
+          },
+          {
+            "categoryCode": "J",
+            "count": 2
+          }
+        ],
+        "difficultyDistribution": {
+          "1": 10,
+          "2": 20,
+          "3": 40,
+          "4": 30
+        }
+      },
+      "questions": [
+        {
+          "code": "PV-A-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-A-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-A-0006",
+          "points": 1
+        },
+        {
+          "code": "PV-B-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-B-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0006",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-H-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-H-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-I-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-J-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-J-0002",
+          "points": 1
+        }
+      ],
+      "assignments": [
+        {
+          "group": "Tổ Thiết kế PV",
+          "dueAt": null
+        },
+        {
+          "group": "Tổ Giám sát & QC",
+          "dueAt": null
+        }
+      ]
+    },
+    {
+      "code": "DT-2026-0011",
+      "name": "Đề sát hạch kỹ sư PV – Đề số 01",
+      "description": "Đề 30 câu theo ma trận chuẩn (10 lĩnh vực; Cơ bản 10% – Trung bình 20% – Nâng cao 40% – Chuyên gia 30%).",
+      "targetAudience": "Kỹ sư thiết kế, giám sát kỹ thuật, QC lắp đặt",
+      "examCategory": "Định kỳ",
+      "status": "PUBLISHED",
+      "durationMinutes": 75,
+      "passingScore": 70,
+      "randomizeQuestions": true,
+      "randomizeOptions": true,
+      "maxAttempts": 1,
+      "publicAccess": true,
+      "startAt": null,
+      "endAt": null,
+      "resultVisibility": "DETAILED",
+      "explanationVisibility": "AFTER_SUBMIT",
+      "blueprint": "Mẫu đề chuẩn 30 câu – Kỹ sư PV",
+      "createdBy": "quanly",
+      "generationConfig": {
+        "seed": 6,
+        "minScenario": 4,
+        "maxPerConcept": 1,
+        "questionTypes": [
+          "SINGLE_CHOICE",
+          "MULTIPLE_CHOICE",
+          "TRUE_FALSE",
+          "NUMERIC"
+        ],
+        "minCalculation": 8,
+        "totalQuestions": 30,
+        "categoryDistribution": [
+          {
+            "categoryCode": "A",
+            "count": 3
+          },
+          {
+            "categoryCode": "B",
+            "count": 2
+          },
+          {
+            "categoryCode": "C",
+            "count": 5
+          },
+          {
+            "categoryCode": "D",
+            "count": 3
+          },
+          {
+            "categoryCode": "E",
+            "count": 5
+          },
+          {
+            "categoryCode": "F",
+            "count": 4
+          },
+          {
+            "categoryCode": "G",
+            "count": 3
+          },
+          {
+            "categoryCode": "H",
+            "count": 2
+          },
+          {
+            "categoryCode": "I",
+            "count": 1
+          },
+          {
+            "categoryCode": "J",
+            "count": 2
+          }
+        ],
+        "difficultyDistribution": {
+          "1": 10,
+          "2": 20,
+          "3": 40,
+          "4": 30
+        }
+      },
+      "questions": [
+        {
+          "code": "PV-A-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-A-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-A-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-B-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-B-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0006",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0006",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-H-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-H-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-I-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-J-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-J-0002",
+          "points": 1
+        }
+      ],
+      "assignments": []
+    },
+    {
+      "code": "DT-2026-0012",
+      "name": "Đề sát hạch kỹ sư PV – Đề số 02",
+      "description": "Đề 30 câu theo ma trận chuẩn (10 lĩnh vực; Cơ bản 10% – Trung bình 20% – Nâng cao 40% – Chuyên gia 30%).",
+      "targetAudience": "Kỹ sư thiết kế, giám sát kỹ thuật, QC lắp đặt",
+      "examCategory": "Định kỳ",
+      "status": "PUBLISHED",
+      "durationMinutes": 75,
+      "passingScore": 70,
+      "randomizeQuestions": true,
+      "randomizeOptions": true,
+      "maxAttempts": 1,
+      "publicAccess": true,
+      "startAt": null,
+      "endAt": null,
+      "resultVisibility": "DETAILED",
+      "explanationVisibility": "AFTER_SUBMIT",
+      "blueprint": "Mẫu đề chuẩn 30 câu – Kỹ sư PV",
+      "createdBy": "quanly",
+      "generationConfig": {
+        "seed": 21,
+        "minScenario": 4,
+        "maxPerConcept": 1,
+        "questionTypes": [
+          "SINGLE_CHOICE",
+          "MULTIPLE_CHOICE",
+          "TRUE_FALSE",
+          "NUMERIC"
+        ],
+        "minCalculation": 8,
+        "totalQuestions": 30,
+        "categoryDistribution": [
+          {
+            "categoryCode": "A",
+            "count": 3
+          },
+          {
+            "categoryCode": "B",
+            "count": 2
+          },
+          {
+            "categoryCode": "C",
+            "count": 5
+          },
+          {
+            "categoryCode": "D",
+            "count": 3
+          },
+          {
+            "categoryCode": "E",
+            "count": 5
+          },
+          {
+            "categoryCode": "F",
+            "count": 4
+          },
+          {
+            "categoryCode": "G",
+            "count": 3
+          },
+          {
+            "categoryCode": "H",
+            "count": 2
+          },
+          {
+            "categoryCode": "I",
+            "count": 1
+          },
+          {
+            "categoryCode": "J",
+            "count": 2
+          }
+        ],
+        "difficultyDistribution": {
+          "1": 10,
+          "2": 20,
+          "3": 40,
+          "4": 30
+        }
+      },
+      "questions": [
+        {
+          "code": "PV-A-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-A-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-A-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-B-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-B-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0008",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-C-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-D-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0005",
+          "points": 1
+        },
+        {
+          "code": "PV-E-0007",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-F-0006",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0002",
+          "points": 1
+        },
+        {
+          "code": "PV-G-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-H-0004",
+          "points": 1
+        },
+        {
+          "code": "PV-H-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-I-0003",
+          "points": 1
+        },
+        {
+          "code": "PV-J-0001",
+          "points": 1
+        },
+        {
+          "code": "PV-J-0002",
+          "points": 1
+        }
+      ],
+      "assignments": []
+    }
+  ]
+}

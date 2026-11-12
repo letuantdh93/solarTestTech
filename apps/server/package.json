@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit -p .",
     "seed:demo": "prisma generate && node scripts/with-env.mjs tsx prisma/seed-demo-results.ts",
     "prisma:status": "node scripts/with-env.mjs prisma migrate status",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "export:exams": "prisma generate && node scripts/with-env.mjs tsx prisma/export-exams.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.7.0",
