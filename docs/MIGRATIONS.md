@@ -25,6 +25,7 @@ Never run `prisma migrate reset` against a database that contains real data.
 | Migration | Content |
 |---|---|
 | `…_init` | All 26 tables (RBAC, sessions, groups, taxonomy, questions/options/media/references/revisions/review logs, blueprints, examinations, assignments, attempts, attempt question snapshots, answers, results, audit logs, AI jobs, settings). **Hand-written additions:** `pg_trgm` extension; GIN trigram indexes on `questions.content`/`title` (keyword search + duplicate detection); GIN index on `questions.tags`; CHECK constraints for difficulty (1–4) and calculation complexity (0–3); CHECK that an assignment targets exactly one of user/group; partial unique index `attempt_one_in_progress_idx` (one IN_PROGRESS attempt per candidate and exam, which makes "start" race-safe). |
+| `20261112100000_guest_exam_access` | `examinations.public_access` (default true); `users.phone` (unique) + `users.is_guest`; `sessions.is_guest`; `examination_attempts.access_session_id` (+ index). Written from `prisma migrate diff`; the diff's DROP statements for the hand-written trigram/GIN indexes were removed on purpose. |
 
 ## Data-preservation rules built into the schema
 

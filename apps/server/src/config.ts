@@ -21,6 +21,7 @@ export const config = {
   webDist: path.resolve(ROOT_DIR, 'apps/web/dist'),
   maxUploadBytes: 5 * 1024 * 1024,
   loginRateLimit: num(process.env.LOGIN_RATE_LIMIT, 10),
+  publicEntryRateLimit: num(process.env.PUBLIC_ENTRY_RATE_LIMIT, 10),
   anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? '',
   aiModel: process.env.AI_MODEL || 'claude-opus-5-5',
   aiProvider: process.env.AI_PROVIDER ?? 'anthropic',

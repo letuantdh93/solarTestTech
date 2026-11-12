@@ -49,6 +49,10 @@ model User {
   id                 String    @id @default(cuid())
   username           String    @unique
   email              String?   @unique
+  /// Normalised phone number – identity of candidates who take exams without an account.
+  phone              String?   @unique
+  /// Created automatically from the "enter name / phone / department" exam entry form.
+  isGuest            Boolean   @default(false) @map("is_guest")
   fullName           String    @map("full_name")
   passwordHash       String    @map("password_hash")
   roleId             String    @map("role_id")
@@ -88,6 +92,8 @@ model Session {
   id         String   @id @default(cuid())
   tokenHash  String   @unique @map("token_hash")
   csrfToken  String   @map("csrf_token")
+  /// Guest sessions (no account) may only access attempts started in the same session.
+  isGuest    Boolean  @default(false) @map("is_guest")
   userId     String   @map("user_id")
   expiresAt  DateTime @map("expires_at")
   ip         String?
@@ -357,6 +363,8 @@ model Examination {
   passingScore          Decimal               @map("passing_score") @db.Decimal(5, 2)
   randomizeQuestions    Boolean               @default(true) @map("randomize_questions")
   randomizeOptions      Boolean               @default(true) @map("randomize_options")
+  /// Candidates may start this exam by entering name / phone / department (no login, no assignment).
+  publicAccess          Boolean               @default(true) @map("public_access")
   maxAttempts           Int                   @default(1) @map("max_attempts")
   startAt               DateTime?             @map("start_at")
   endAt                 DateTime?             @map("end_at")
@@ -377,7 +385,7 @@ model Examination {
   attempts    ExaminationAttempt[]
   results     ExaminationResult[]
 
-  @@index([status])
+  @@index([status, publicAccess])
   @@map("examinations")
 }
 
@@ -432,6 +440,8 @@ model ExaminationAttempt {
   submittedAt   DateTime?     @map("submitted_at")
   ip            String?
   userAgent     String?       @map("user_agent")
+  /// Session allowed to work on / view this attempt for guest (no-account) candidates.
+  accessSessionId String?     @map("access_session_id")
   /// Exam settings frozen at attempt start (passing score, visibility…)
   examSnapshot  Json          @map("exam_snapshot")
 
@@ -442,6 +452,7 @@ model ExaminationAttempt {
 
   @@unique([examinationId, userId, attemptNo])
   @@index([userId, status])
+  @@index([accessSessionId])
   @@index([status, deadlineAt])
   @@map("examination_attempts")
 }

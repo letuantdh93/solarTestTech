@@ -263,7 +263,8 @@ export default function ExamBuilderPage() {
                 <Row k={t('exams.duration')} v={`${cfg.durationMinutes} ${t('common.minutes')}`} />
                 <Row k={t('exams.passingScore')} v={`${cfg.passingScore}%`} />
                 <Row k={t('exams.maxAttempts')} v={cfg.maxAttempts} />
-                <Row k={t('exams.randomizeQuestions')} v={cfg.randomizeQuestions ? t('common.yes') : t('common.no')} />
+                <Row k={t('exams.randomizeQuestions')} v={t('common.yes')} />
+                <Row k={t('guest.publicEntryPage')} v={cfg.publicAccess ? t('common.yes') : t('common.no')} />
                 <Row k={t('exams.randomizeOptions')} v={cfg.randomizeOptions ? t('common.yes') : t('common.no')} />
                 <Row k={t('exams.resultVisibility')} v={t(`resultVisibility.${cfg.resultVisibility}`)} />
                 <Row k={t('exams.explanationVisibility')} v={t(`explanationVisibility.${cfg.explanationVisibility}`)} />

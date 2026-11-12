@@ -11,6 +11,8 @@ const userSelect = {
   id: true,
   username: true,
   email: true,
+  phone: true,
+  isGuest: true,
   fullName: true,
   department: true,
   position: true,
@@ -39,6 +41,7 @@ export async function listUsers(q: { q?: string; role?: string; groupId?: string
       { fullName: { contains: q.q, mode: 'insensitive' } },
       { email: { contains: q.q, mode: 'insensitive' } },
       { department: { contains: q.q, mode: 'insensitive' } },
+      { phone: { contains: q.q.replace(/\D/g, '') || q.q } },
     ];
   if (q.role) where.role = { code: q.role };
   if (q.groupId) where.groups = { some: { groupId: q.groupId } };

@@ -11,7 +11,7 @@ import { CheckList } from '@/components/ui/CheckList';
 import { fmtDateTime } from '@/lib/format';
 
 interface UserRow {
-  id: string; username: string; email: string | null; fullName: string; department: string | null; position: string | null;
+  id: string; username: string; email: string | null; phone: string | null; isGuest: boolean; fullName: string; department: string | null; position: string | null;
   isActive: boolean; lastLoginAt: string | null; role: { code: RoleCode; name: string };
   groups: Array<{ id: string; name: string }>; categories: Array<{ id: string; code: string; name: string }>;
 }
@@ -83,8 +83,8 @@ function UsersTab() {
             <tbody>
               {data.items.map((u) => (
                 <tr key={u.id} className="transition-colors hover:bg-surface-2/60">
-                  <Td><p className="font-medium">{u.fullName}</p><p className="text-xs text-muted">@{u.username}{u.email ? ` · ${u.email}` : ''}</p></Td>
-                  <Td><Badge tone={roleTone[u.role.code]}>{t(`roles.${u.role.code}`)}</Badge></Td>
+                  <Td><p className="font-medium">{u.fullName}</p><p className="text-xs text-muted">{u.isGuest ? `☎ ${u.phone}` : `@${u.username}${u.email ? ` · ${u.email}` : ''}`}</p></Td>
+                  <Td><Badge tone={roleTone[u.role.code]}>{t(`roles.${u.role.code}`)}</Badge>{u.isGuest && <Badge tone="info" className="ml-1">{t('guest.guestBadge')}</Badge>}</Td>
                   <Td className="hidden text-muted md:table-cell">{u.department ?? '—'}<p className="text-xs">{u.position}</p></Td>
                   <Td className="hidden lg:table-cell"><div className="flex flex-wrap gap-1">{u.groups.map((g) => <Badge key={g.id}>{g.name}</Badge>)}</div></Td>
                   <Td className="hidden text-xs text-muted lg:table-cell">{u.lastLoginAt ? fmtDateTime(u.lastLoginAt) : t('users.never')}</Td>

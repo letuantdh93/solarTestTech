@@ -5,12 +5,13 @@ import { Field, Input, Select, Switch, Textarea } from '@/components/ui/primitiv
 export interface ExamConfig {
   name: string; description: string; targetAudience: string; examCategory: string;
   durationMinutes: number; passingScore: number; randomizeQuestions: boolean; randomizeOptions: boolean; maxAttempts: number;
+  publicAccess: boolean;
   startAt: string; endAt: string; resultVisibility: (typeof RESULT_VISIBILITY)[number]; explanationVisibility: (typeof EXPLANATION_VISIBILITY)[number];
 }
 
 export const defaultConfig = (): ExamConfig => ({
   name: '', description: '', targetAudience: '', examCategory: '', durationMinutes: 60, passingScore: 70,
-  randomizeQuestions: true, randomizeOptions: true, maxAttempts: 1, startAt: '', endAt: '', resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT',
+  randomizeQuestions: true, randomizeOptions: true, maxAttempts: 1, publicAccess: true, startAt: '', endAt: '', resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT',
 });
 
 /** datetime-local <-> ISO helpers (local time). */
@@ -42,11 +43,15 @@ export function ExamConfigForm({ value, onChange, errors = {} }: { value: ExamCo
       <Field label={t('exams.passingScore')} error={errors.passingScore} required><Input type="number" min={0} max={100} value={value.passingScore} onChange={(e) => set('passingScore', Number(e.target.value))} /></Field>
       <Field label={t('exams.maxAttempts')}><Input type="number" min={1} max={20} value={value.maxAttempts} onChange={(e) => set('maxAttempts', Number(e.target.value))} /></Field>
       <div className="flex flex-col justify-end gap-3 pb-1">
-        <Switch checked={value.randomizeQuestions} onChange={(v) => set('randomizeQuestions', v)} label={t('exams.randomizeQuestions')} />
+        <p className="text-xs text-muted">{t('guest.alwaysShuffled')}</p>
         <Switch checked={value.randomizeOptions} onChange={(v) => set('randomizeOptions', v)} label={t('exams.randomizeOptions')} />
       </div>
       <Field label={t('exams.startAt')}><Input type="datetime-local" value={value.startAt} onChange={(e) => set('startAt', e.target.value)} /></Field>
       <Field label={t('exams.endAt')} error={errors.endAt}><Input type="datetime-local" value={value.endAt} onChange={(e) => set('endAt', e.target.value)} invalid={!!errors.endAt} /></Field>
+      <div className="rounded-lg border border-primary/25 bg-primary-soft/30 p-3 md:col-span-2">
+        <Switch checked={value.publicAccess} onChange={(v) => set('publicAccess', v)} label={t('guest.publicAccess')} />
+        <p className="mt-1 pl-14 text-xs text-muted">{t('guest.publicAccessHint')}</p>
+      </div>
       <Field label={t('exams.resultVisibility')}>
         <Select value={value.resultVisibility} onChange={(e) => set('resultVisibility', e.target.value as ExamConfig['resultVisibility'])}>
           {RESULT_VISIBILITY.map((v) => <option key={v} value={v}>{t(`resultVisibility.${v}`)}</option>)}

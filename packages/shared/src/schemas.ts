@@ -196,6 +196,7 @@ export const examInputSchema = z
     endAt: z.coerce.date().nullable().optional(),
     resultVisibility: z.enum(RESULT_VISIBILITY).default('DETAILED'),
     explanationVisibility: z.enum(EXPLANATION_VISIBILITY).default('AFTER_SUBMIT'),
+    publicAccess: z.boolean().default(true),
     blueprintId: idSchema.nullable().optional(),
   })
   .refine((v) => !v.startAt || !v.endAt || v.endAt > v.startAt, {
@@ -254,4 +255,28 @@ export const settingsSchema = z.object({
   aiEnabled: z.boolean().optional(),
   aiModel: str(100).optional(),
   similarityThreshold: z.number().min(0.3).max(0.99).optional(),
+});
+
+/** Normalise a Vietnamese phone number: strip separators, +84/84 → 0. Returns null if invalid. */
+export function normalizePhone(raw: string): string | null {
+  let p = raw.replace(/[\s.\-()]/g, '');
+  if (p.startsWith('+84')) p = '0' + p.slice(3);
+  else if (/^84\d{9,10}$/.test(p)) p = '0' + p.slice(2);
+  return /^0\d{9,10}$/.test(p) ? p : null;
+}
+
+/** Exam entry form for candidates without an account. */
+export const guestEntrySchema = z.object({
+  fullName: z
+    .string({ required_error: req })
+    .trim()
+    .min(2, 'Vui lòng nhập họ và tên')
+    .max(100, 'Tối đa 100 ký tự')
+    .regex(/^[\p{L}\s.'-]+$/u, 'Họ tên chỉ gồm chữ cái và khoảng trắng'),
+  phone: z
+    .string({ required_error: req })
+    .trim()
+    .max(20)
+    .refine((v) => normalizePhone(v) !== null, 'Số điện thoại không hợp lệ (10–11 chữ số, bắt đầu bằng 0)'),
+  department: z.string({ required_error: req }).trim().min(2, 'Vui lòng nhập phòng ban làm việc').max(150, 'Tối đa 150 ký tự'),
 });

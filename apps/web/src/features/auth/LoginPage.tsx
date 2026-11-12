@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BarChart3, Lock, ShieldCheck, User, Wand2 } from 'lucide-react';
 import { BrandLogo } from '@/components/BrandLogo';
@@ -138,6 +138,9 @@ export function LoginPage() {
             <Button type="submit" className="w-full" size="lg" loading={busy} disabled={!username || !password}>
               {busy ? t('auth.loggingIn') : t('auth.login')}
             </Button>
+            <Link to="/vao-thi" className="block rounded-lg border border-dashed border-primary/40 px-4 py-3 text-center text-sm font-medium text-primary transition-colors hover:bg-primary-soft/40">
+              {t('guest.candidateEntry')} →
+            </Link>
           </div>
         </motion.form>
       </div>

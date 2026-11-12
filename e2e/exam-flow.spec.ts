@@ -9,7 +9,7 @@ test.describe('candidate examination flow', () => {
     const { headers } = await apiLogin(req, 'quanly');
     const bp = (await (await req.get('/api/blueprints')).json()).find((b: { isDefault: boolean }) => b.isDefault);
     const gen = await (await req.post('/api/exam-builder/generate', { data: { ...bp.config, totalQuestions: 10, categoryDistribution: bp.config.categoryDistribution.slice(0, 5).map((c: { categoryId: string }) => ({ categoryId: c.categoryId, count: 2 })), difficultyDistribution: { 1: 10, 2: 30, 3: 40, 4: 20 }, minCalculation: 0, minScenario: 0, seed: Date.now() % 100000 }, headers })).json();
-    const exam = await (await req.post('/api/exams', { data: { name: examName, durationMinutes: 20, passingScore: 50, randomizeQuestions: true, randomizeOptions: true, maxAttempts: 1, resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT', questionIds: gen.questionIds }, headers })).json();
+    const exam = await (await req.post('/api/exams', { data: { name: examName, durationMinutes: 20, passingScore: 50, randomizeQuestions: true, randomizeOptions: true, maxAttempts: 1, resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT', publicAccess: false, questionIds: gen.questionIds }, headers })).json();
     examId = exam.id;
     await req.post(`/api/exams/${examId}/status`, { data: { status: 'PUBLISHED' }, headers });
     const users = await (await req.get('/api/users?role=CANDIDATE&pageSize=100')).json();

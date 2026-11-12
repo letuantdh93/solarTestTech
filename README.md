@@ -44,6 +44,9 @@ Server tests create an **ephemeral database** per run (`solar_exam_test_run_*`),
 
 ## Key behaviours
 
+- **Exam entry without login:** candidates open `/vao-thi`, enter full name, phone number and department, and the system **picks one of the open public exams at random**. It only picks exams where that phone still has attempts left, and resumes an unfinished attempt first. `/vao-thi/<exam code>` links straight to a specific exam. The phone number identifies the candidate. A no-login session can only access the attempts started in that session, so typing someone else's number does not reveal their results. Staff still log in at `/dang-nhap`. Each exam has a "Cho phép thi không cần đăng nhập" switch.
+- **Question order is always randomised** on every attempt with a fresh random seed. Option order follows the exam setting.
+
 - **Answer-key verification:** calculation questions carry a `calcSpec` (safe expression + variables). The server recomputes it and blocks submission/approval when the stored key does not match. All 61 demo questions are verified in CI (`test/seed-questions.test.ts`).
 - **Question workflow:** DRAFT → PENDING_REVIEW → APPROVED → PUBLISHED → ARCHIVED. Only APPROVED/PUBLISHED questions can be used in exams. Editing an approved question returns it to DRAFT. Authors cannot approve their own questions.
 - **Exam generation:** category × difficulty allocation is solved as a max-flow problem. Categories are never substituted, and shortfalls and difficulty deviations are reported explicitly.

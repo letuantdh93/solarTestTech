@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Archive, BarChart3, ClipboardList, Copy, Lock, Pencil, Rocket, Save, Settings2, Trash2, UserPlus, Users, XCircle, RotateCcw } from 'lucide-react';
+import { Archive, BarChart3, Link2, ClipboardList, Copy, Lock, Pencil, Rocket, Save, Settings2, Trash2, UserPlus, Users, XCircle, RotateCcw } from 'lucide-react';
 import type { ExamStatus, QuestionType } from '@solar/shared';
 import { useT } from '@/i18n';
 import { api } from '@/lib/api';
@@ -18,7 +18,7 @@ import { ExamStats } from '../results/ExamStats';
 
 interface ExamDetail {
   id: string; code: string; name: string; description: string | null; targetAudience: string | null; examCategory: string | null; status: ExamStatus;
-  durationMinutes: number; passingScore: number; randomizeQuestions: boolean; randomizeOptions: boolean; maxAttempts: number; startAt: string | null; endAt: string | null;
+  durationMinutes: number; passingScore: number; randomizeQuestions: boolean; publicAccess: boolean; randomizeOptions: boolean; maxAttempts: number; startAt: string | null; endAt: string | null;
   resultVisibility: ExamConfig['resultVisibility']; explanationVisibility: ExamConfig['explanationVisibility'];
   _count: { questions: number; assignments: number; attempts: number; results: number };
   questions: Array<{ id: string; points: number; question: PickedQuestion & { status: string; type: QuestionType } }>;
@@ -68,6 +68,16 @@ export default function ExamDetailPage() {
         ...(manage ? [{ id: 'settings' as const, label: t('exams.settingsTab'), icon: <Settings2 className="h-4 w-4" /> }] : []),
         { id: 'stats', label: t('exams.statsTab'), icon: <BarChart3 className="h-4 w-4" /> },
       ]} />
+      {data.publicAccess && data.status === 'PUBLISHED' && (
+        <Card className="mb-5 flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">{t('guest.publicLink')}</p>
+            <p className="truncate font-mono text-xs text-muted">{`${location.origin}/vao-thi/${data.code}`}</p>
+            <p className="mt-1 text-xs text-muted">{t('guest.publicAccessHint')} ({location.origin}/vao-thi)</p>
+          </div>
+          <Button variant="outline" size="sm" icon={<Link2 className="h-4 w-4" />} onClick={() => { void navigator.clipboard?.writeText(`${location.origin}/vao-thi/${data.code}`); toast.success(t('guest.copied')); }}>{t('guest.copyLink')}</Button>
+        </Card>
+      )}
       {tab === 'questions' && <QuestionsTab exam={data} locked={locked || !manage} />}
       {tab === 'assign' && (
         <Card>
@@ -126,7 +136,7 @@ function SettingsTab({ exam }: { exam: ExamDetail }) {
   const { t } = useT();
   const [cfg, setCfg] = useState<ExamConfig>({
     name: exam.name, description: exam.description ?? '', targetAudience: exam.targetAudience ?? '', examCategory: exam.examCategory ?? '', durationMinutes: exam.durationMinutes,
-    passingScore: exam.passingScore, randomizeQuestions: exam.randomizeQuestions, randomizeOptions: exam.randomizeOptions, maxAttempts: exam.maxAttempts,
+    passingScore: exam.passingScore, randomizeQuestions: true, publicAccess: exam.publicAccess, randomizeOptions: exam.randomizeOptions, maxAttempts: exam.maxAttempts,
     startAt: toLocalInput(exam.startAt), endAt: toLocalInput(exam.endAt), resultVisibility: exam.resultVisibility, explanationVisibility: exam.explanationVisibility,
   });
   const save = useAction(() => api(`/exams/${exam.id}`, { method: 'PUT', body: configToPayload(cfg) }), { success: t('exams.saved'), invalidate: [['exam', exam.id], ['exams']] });

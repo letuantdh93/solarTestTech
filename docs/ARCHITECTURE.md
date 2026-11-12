@@ -27,6 +27,7 @@ packages/shared ── Zod schemas, enums/permissions, safe expression evaluator
 | Input | Zod validation everywhere (Vietnamese messages); Prisma parameterised queries; 2 MB body limit |
 | XSS | strict CSP (`script-src 'self'`); Markdown rendered without raw HTML |
 | Uploads | magic-byte sniffing (PNG/JPEG/WebP/GIF only, SVG rejected), random file names, 5 MB limit, authorised download with `nosniff` |
+| No-login entry | `/api/public/*`: rate-limited entry (name/phone/department) creates or reuses a guest candidate keyed by normalised phone; guest session TTL = exam duration + 4 h; guest permissions limited to `exams.take` + `results.view_own`, scoped to attempts whose `access_session_id` matches the session; guest identities cannot log in with a password; phones belonging to login accounts must log in |
 | Exam integrity | answer keys stripped from candidate payloads; server-side grading; row-locked idempotent submit; server-authoritative deadline with auto-submit |
 | Audit | `audit_logs` for administrative operations, logins, exports, AI jobs |
 

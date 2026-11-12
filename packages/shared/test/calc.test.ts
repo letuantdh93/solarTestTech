@@ -80,3 +80,19 @@ describe('text utils', () => {
     expect(shuffle([1, 2, 3, 4, 5], rng(42))).toEqual(shuffle([1, 2, 3, 4, 5], rng(42)));
   });
 });
+
+import { normalizePhone, guestEntrySchema } from '../src';
+describe('guest entry', () => {
+  it('normalises Vietnamese phone numbers', () => {
+    expect(normalizePhone('0901 234 567')).toBe('0901234567');
+    expect(normalizePhone('+84 901.234.567')).toBe('0901234567');
+    expect(normalizePhone('84901234567')).toBe('0901234567');
+    expect(normalizePhone('12345')).toBeNull();
+    expect(normalizePhone('0901abc567')).toBeNull();
+  });
+  it('validates the entry form with Vietnamese names', () => {
+    expect(guestEntrySchema.safeParse({ fullName: 'Nguyễn Thị Ánh Tuyết', phone: '0912345678', department: 'Phòng Thiết kế' }).success).toBe(true);
+    expect(guestEntrySchema.safeParse({ fullName: '<script>', phone: '0912345678', department: 'X Y' }).success).toBe(false);
+    expect(guestEntrySchema.safeParse({ fullName: 'An', phone: '123', department: '' }).success).toBe(false);
+  });
+});

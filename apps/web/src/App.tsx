@@ -8,6 +8,7 @@ import { AppShell } from './components/layout/AppShell';
 import { EmptyState, Skeleton } from './components/ui/data';
 import { Button } from './components/ui/primitives';
 import { LoginPage } from './features/auth/LoginPage';
+import { GuestLayout } from './features/guest/GuestLayout';
 
 const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage'));
 const ChangePasswordPage = lazy(() => import('./features/auth/ChangePasswordPage'));
@@ -29,6 +30,7 @@ const MyResultsPage = lazy(() => import('./features/results/MyResultsPage'));
 const ResultsPage = lazy(() => import('./features/results/ResultsPage'));
 const AnalyticsPage = lazy(() => import('./features/analytics/AnalyticsPage'));
 const AiAssistantPage = lazy(() => import('./features/ai/AiAssistantPage'));
+const GuestEntryPage = lazy(() => import('./features/guest/GuestEntryPage'));
 
 function PageFallback() {
   return (
@@ -66,11 +68,31 @@ export function App() {
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary" role="status" aria-label={t('ui.loading')} />
       </div>
     );
-  if (!me)
+  const publicEntry = (
+    <>
+      <Route path="/vao-thi" element={<Suspense fallback={<PageFallback />}><GuestEntryPage /></Suspense>} />
+      <Route path="/vao-thi/:code" element={<Suspense fallback={<PageFallback />}><GuestEntryPage /></Suspense>} />
+    </>
+  );
+  if (!me) {
+    // Candidates land on the no-login exam entry; staff pages lead to the login form.
+    const toEntry = loc.pathname === '/' || loc.pathname.startsWith('/thi') || loc.pathname.startsWith('/ket-qua/luot');
     return (
       <Routes>
         <Route path="/dang-nhap" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/dang-nhap" replace state={{ from: loc.pathname }} />} />
+        {publicEntry}
+        <Route path="*" element={toEntry ? <Navigate to="/vao-thi" replace /> : <Navigate to="/dang-nhap" replace state={{ from: loc.pathname }} />} />
+      </Routes>
+    );
+  }
+  if (me.isGuest)
+    return (
+      <Routes>
+        <Route path="/thi/lam-bai/:attemptId" element={<Guard perms={['exams.take']}><TakeExamPage /></Guard>} />
+        <Route path="/ket-qua/luot/:attemptId" element={<GuestLayout><Guard><ResultPage /></Guard></GuestLayout>} />
+        <Route path="/dang-nhap" element={<LoginPage />} />
+        {publicEntry}
+        <Route path="*" element={<Navigate to="/vao-thi" replace />} />
       </Routes>
     );
   if (me.mustChangePassword && loc.pathname !== '/doi-mat-khau') return <Navigate to="/doi-mat-khau" replace />;

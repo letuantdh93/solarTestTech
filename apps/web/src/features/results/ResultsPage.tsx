@@ -11,7 +11,7 @@ import { PassBadge } from '@/components/domain';
 import { scoreTone } from '@/components/charts';
 import { cn, fmtDateTime, fmtDuration, fmtPct } from '@/lib/format';
 
-interface Row { id: string; attemptId: string; user: { fullName: string; username: string; department: string | null }; exam: { code: string; name: string }; attemptNo: number; status: string; submittedAt: string; scorePercent: number; correctCount: number; incorrectCount: number; unansweredCount: number; durationSeconds: number; passed: boolean }
+interface Row { id: string; attemptId: string; user: { fullName: string; username: string; phone: string | null; department: string | null }; exam: { code: string; name: string }; attemptNo: number; status: string; submittedAt: string; scorePercent: number; correctCount: number; incorrectCount: number; unansweredCount: number; durationSeconds: number; passed: boolean }
 
 export default function ResultsPage() {
   const { t } = useT();
@@ -48,7 +48,7 @@ export default function ResultsPage() {
               <tbody>
                 {data.items.map((r) => (
                   <tr key={r.id} className="cursor-pointer transition-colors hover:bg-surface-2/60" onClick={() => nav(`/ket-qua/luot/${r.attemptId}`)}>
-                    <Td><p className="font-medium">{r.user.fullName}</p><p className="text-xs text-muted">{r.user.department}</p></Td>
+                    <Td><p className="font-medium">{r.user.fullName}</p><p className="text-xs text-muted">{[r.user.department, r.user.phone].filter(Boolean).join(' · ')}</p></Td>
                     <Td className="hidden max-w-[260px] md:table-cell"><p className="truncate">{r.exam.name}</p><p className="font-mono text-xs text-muted">{r.exam.code} · {t('results.attemptNo')} {r.attemptNo}</p></Td>
                     <Td className={cn('num text-right text-base font-bold', `text-${scoreTone(r.scorePercent)}`)}>{fmtPct(r.scorePercent)}</Td>
                     <Td className="num hidden text-sm lg:table-cell"><span className="text-success">{r.correctCount}</span> / <span className="text-danger">{r.incorrectCount}</span> / <span className="text-muted">{r.unansweredCount}</span></Td>

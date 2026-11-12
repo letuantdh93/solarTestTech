@@ -3,7 +3,7 @@ import { loginSchema, changePasswordSchema } from '@solar/shared';
 import { prisma } from '../../db';
 import { parse } from '../../lib/validate';
 import { AppError, badRequest, unauthorized } from '../../lib/errors';
-import { createSession, destroySession, requireAuth } from '../../lib/auth';
+import { createSession, destroySession, requireAccount, requireAuth } from '../../lib/auth';
 import { dummyHash, hashPassword, verifyPassword } from '../../lib/password';
 import { audit } from '../../lib/audit';
 import { config } from '../../config';
@@ -20,6 +20,7 @@ export function meResponse(req: import('fastify').FastifyRequest) {
     role: u.roleCode,
     permissions: [...u.permissions],
     mustChangePassword: u.mustChangePassword,
+    isGuest: u.isGuest,
     csrfToken: u.csrfToken,
   };
 }
@@ -32,7 +33,7 @@ export async function authRoutes(app: FastifyInstance) {
       const { username, password } = parse(loginSchema, req.body);
       const user = await prisma.user.findUnique({ where: { username: username.toLowerCase() } });
       const invalid = () => unauthorized('Tên đăng nhập hoặc mật khẩu không đúng');
-      if (!user) {
+      if (!user || user.isGuest) {
         await verifyPassword(await dummyHash(), password);
         throw invalid();
       }
@@ -74,7 +75,7 @@ export async function authRoutes(app: FastifyInstance) {
 
   app.post(
     '/change-password',
-    { preHandler: requireAuth(), config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
+    { preHandler: requireAccount(), config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
     async (req) => {
       const body = parse(changePasswordSchema, req.body);
       const user = await prisma.user.findUniqueOrThrow({ where: { id: req.user!.id } });

@@ -18,6 +18,8 @@ export interface AuthUser {
   roleCode: RoleCode;
   permissions: Set<Permission>;
   mustChangePassword: boolean;
+  /** Candidate who entered via name/phone/department (no account). */
+  isGuest: boolean;
   sessionId: string;
   csrfToken: string;
 }
@@ -51,32 +53,49 @@ function cookieOpts(httpOnly: boolean) {
     httpOnly,
     sameSite: 'strict' as const,
     secure: config.cookieSecure,
-    maxAge: config.sessionTtlHours * 3600,
+    maxAge: Math.ceil(config.sessionTtlHours * 3600),
   };
 }
 
-export async function createSession(req: FastifyRequest, reply: FastifyReply, userId: string) {
+export async function createSession(req: FastifyRequest, reply: FastifyReply, userId: string, opts: { isGuest?: boolean; ttlHours?: number } = {}) {
   const token = randomToken();
   const csrfToken = randomToken();
-  await prisma.session.create({
+  const ttl = opts.ttlHours ?? config.sessionTtlHours;
+  // Replace any session this browser already holds.
+  const existing = req.cookies[SESSION_COOKIE];
+  if (existing) await prisma.session.deleteMany({ where: { tokenHash: sha256(existing) } });
+  const session = await prisma.session.create({
     data: {
       tokenHash: sha256(token),
       csrfToken,
       userId,
-      expiresAt: new Date(Date.now() + config.sessionTtlHours * 3600_000),
+      isGuest: opts.isGuest ?? false,
+      expiresAt: new Date(Date.now() + Math.ceil(ttl * 3600) * 1000),
       ip: req.ip,
       userAgent: String(req.headers['user-agent'] ?? '').slice(0, 300),
     },
   });
-  reply.setCookie(SESSION_COOKIE, token, cookieOpts(true));
-  reply.setCookie(CSRF_COOKIE, csrfToken, cookieOpts(false));
-  return csrfToken;
+  // Cookie maxAge must be an integer number of seconds (fractional exam durations otherwise fail).
+  const maxAge = Math.ceil(ttl * 3600);
+  reply.setCookie(SESSION_COOKIE, token, { ...cookieOpts(true), maxAge });
+  reply.setCookie(CSRF_COOKIE, csrfToken, { ...cookieOpts(false), maxAge });
+  return session;
 }
 
 export async function destroySession(req: FastifyRequest, reply: FastifyReply) {
   if (req.user) await prisma.session.deleteMany({ where: { id: req.user.sessionId } });
   reply.clearCookie(SESSION_COOKIE, { path: '/' });
   reply.clearCookie(CSRF_COOKIE, { path: '/' });
+}
+
+const GUEST_PERMISSIONS = new Set<Permission>(['exams.take', 'results.view_own']);
+
+/** Account-only routes (history, assigned exams, password…) reject guest sessions. */
+export function requireAccount() {
+  return async (req: FastifyRequest) => {
+    if (!req.user) throw unauthorized();
+    if (req.user.isGuest) throw forbidden('Chức năng này dành cho tài khoản đăng nhập');
+  };
 }
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
@@ -94,8 +113,8 @@ export const authPlugin = fp(async (app: FastifyInstance) => {
     });
     if (!session || session.expiresAt < new Date() || !session.user.isActive) return;
 
-    // Sliding expiry, written at most once per 5 minutes.
-    if (Date.now() - session.lastSeenAt.getTime() > 5 * 60_000) {
+    // Sliding expiry (account sessions only), written at most once per 5 minutes.
+    if (!session.isGuest && Date.now() - session.lastSeenAt.getTime() > 5 * 60_000) {
       await prisma.session.update({
         where: { id: session.id },
         data: { lastSeenAt: new Date(), expiresAt: new Date(Date.now() + config.sessionTtlHours * 3600_000) },
@@ -107,8 +126,12 @@ export const authPlugin = fp(async (app: FastifyInstance) => {
       fullName: session.user.fullName,
       roleId: session.user.roleId,
       roleCode: session.user.role.code as RoleCode,
-      permissions: await rolePermissions(session.user.roleId),
-      mustChangePassword: session.user.mustChangePassword,
+      // Guest sessions never get more than taking exams and viewing their own (session-scoped) results.
+      permissions: session.isGuest
+        ? new Set([...(await rolePermissions(session.user.roleId))].filter((p) => GUEST_PERMISSIONS.has(p)))
+        : await rolePermissions(session.user.roleId),
+      mustChangePassword: session.isGuest ? false : session.user.mustChangePassword,
+      isGuest: session.isGuest,
       sessionId: session.id,
       csrfToken: session.csrfToken,
     };

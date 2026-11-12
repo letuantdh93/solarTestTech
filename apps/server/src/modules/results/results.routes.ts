@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../../db';
 import { parse } from '../../lib/validate';
-import { requireAuth } from '../../lib/auth';
+import { requireAccount, requireAuth } from '../../lib/auth';
 import { audit } from '../../lib/audit';
 import { paged } from '../../lib/http';
 import { badRequest, notFound } from '../../lib/errors';
@@ -39,7 +39,7 @@ export async function resultsRoutes(app: FastifyInstance) {
     const d = await getResultDetail(req, id);
     if (!('summary' in d) || !d.summary) throw badRequest('Kết quả bài thi này chưa được công bố');
     const pdf = await resultPdf(d as unknown as ResultPdfData);
-    return send(reply, pdf, 'application/pdf', `ket-qua-${(d as { candidate: { username: string } }).candidate.username}-${stamp()}.pdf`);
+    return send(reply, pdf, 'application/pdf', `ket-qua-${(d as { candidate: { username: string; phone?: string | null } }).candidate.phone ?? (d as { candidate: { username: string } }).candidate.username}-${stamp()}.pdf`);
   });
 
   app.get('/results', { preHandler: staff }, async (req) => {
@@ -76,7 +76,7 @@ export async function resultsRoutes(app: FastifyInstance) {
     return send(reply, pdf, 'application/pdf', `bao-cao-nang-luc-${stamp()}.pdf`);
   });
 
-  app.get('/my/results', { preHandler: requireAuth('results.view_own') }, async (req) => personalHistory(req.user!.id));
+  app.get('/my/results', { preHandler: [requireAuth('results.view_own'), requireAccount()] }, async (req) => personalHistory(req.user!.id));
 
   /** Individual history for staff (employee report). */
   app.get('/users/:id/results', { preHandler: staff }, async (req) => {

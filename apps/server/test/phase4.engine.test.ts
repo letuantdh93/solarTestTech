@@ -19,7 +19,7 @@ describe('Phase 4 – examination engine', () => {
   async function makeExam(extra: Record<string, unknown> = {}, ids = questionIds) {
     const e = (await manager.post('/api/exams', {
       name: 'Bài thi engine', durationMinutes: 30, passingScore: 70, randomizeQuestions: true, randomizeOptions: true, maxAttempts: 2,
-      resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT', questionIds: ids, ...extra,
+      resultVisibility: 'DETAILED', explanationVisibility: 'AFTER_SUBMIT', publicAccess: false, questionIds: ids, ...extra,
     })).json();
     await manager.post(`/api/exams/${e.id}/status`, { status: 'PUBLISHED' });
     const users = (await manager.get('/api/users?role=CANDIDATE&pageSize=100')).json().items as Array<{ id: string; username: string }>;

@@ -87,13 +87,24 @@ function buildSnapshot(q: Prisma.QuestionGetPayload<{ include: { options: true; 
 
 export async function startAttempt(req: FastifyRequest, examId: string) {
   const userId = req.user!.id;
+  const guest = req.user!.isGuest;
   const exam = await prisma.examination.findFirst({
-    where: { id: examId, ...assignedWhere(userId) },
+    // Guests may start public exams; account candidates may start assigned exams or public ones.
+    where: { id: examId, ...(guest ? { publicAccess: true } : { OR: [assignedWhere(userId), { publicAccess: true }] }) },
     include: { questions: { orderBy: { sortOrder: 'asc' }, include: { question: { include: { options: true, references: true, media: true, category: true } } } } },
   });
   if (!exam) throw notFound('Không tìm thấy bài thi được giao cho bạn');
-  const existing = await prisma.examinationAttempt.findFirst({ where: { examinationId: examId, userId, status: 'IN_PROGRESS' } });
-  if (existing) return existing;
+  let existing = await prisma.examinationAttempt.findFirst({ where: { examinationId: examId, userId, status: 'IN_PROGRESS' } });
+  if (existing && Date.now() > existing.deadlineAt.getTime() + GRACE_MS) {
+    // Time ran out while away: close it (counts as a used attempt) instead of resuming.
+    await submitAttempt(null, existing.id, true);
+    existing = null;
+  }
+  if (existing) {
+    // Resume (e.g. browser closed): bind the attempt to the current session.
+    if (guest) return prisma.examinationAttempt.update({ where: { id: existing.id }, data: { accessSessionId: req.user!.sessionId } });
+    return existing;
+  }
   const now = new Date();
   if (exam.status !== 'PUBLISHED') throw forbidden('Kỳ thi hiện không mở');
   if (exam.startAt && exam.startAt > now) throw forbidden('Chưa đến thời gian mở đề');
@@ -106,7 +117,8 @@ export async function startAttempt(req: FastifyRequest, examId: string) {
 
   const seed = crypto.randomBytes(4).readUInt32BE(0);
   const rand = rng(seed);
-  const ordered = exam.randomizeQuestions ? shuffle(exam.questions, rand) : exam.questions;
+  // Question order is ALWAYS randomised per attempt (fresh cryptographic seed each time).
+  const ordered = shuffle(exam.questions, rand);
   const durationEnd = new Date(now.getTime() + exam.durationMinutes * 60_000);
   const deadlineAt = exam.endAt && exam.endAt < durationEnd ? exam.endAt : durationEnd;
   const snapshot: ExamSnapshot = {
@@ -119,6 +131,7 @@ export async function startAttempt(req: FastifyRequest, examId: string) {
       const a = await tx.examinationAttempt.create({
         data: {
           examinationId: examId, userId, attemptNo: used + 1, deadlineAt, startedAt: now,
+          accessSessionId: guest ? req.user!.sessionId : null,
           ip: req.ip, userAgent: String(req.headers['user-agent'] ?? '').slice(0, 300),
           examSnapshot: snapshot as unknown as Prisma.InputJsonValue,
         },
@@ -153,17 +166,24 @@ export async function startAttempt(req: FastifyRequest, examId: string) {
 
 // ───────────── Candidate view (sanitised) ─────────────
 
-async function ownAttempt(attemptId: string, userId: string) {
+/** Ownership check; guest sessions are further limited to attempts bound to their own session. */
+export function canAccessAttempt(req: FastifyRequest, a: { userId: string; accessSessionId: string | null }) {
+  const u = req.user!;
+  if (a.userId !== u.id) return false;
+  return !u.isGuest || a.accessSessionId === u.sessionId;
+}
+
+async function ownAttempt(req: FastifyRequest, attemptId: string) {
   const a = await prisma.examinationAttempt.findUnique({ where: { id: attemptId } });
-  if (!a || a.userId !== userId) throw notFound('Không tìm thấy lượt thi');
+  if (!a || !canAccessAttempt(req, a)) throw notFound('Không tìm thấy lượt thi');
   return a;
 }
 
 export async function getAttemptForCandidate(req: FastifyRequest, attemptId: string) {
-  let a = await ownAttempt(attemptId, req.user!.id);
+  let a = await ownAttempt(req, attemptId);
   if (a.status === 'IN_PROGRESS' && Date.now() > a.deadlineAt.getTime() + GRACE_MS) {
     await submitAttempt(null, a.id, true);
-    a = await ownAttempt(attemptId, req.user!.id);
+    a = await ownAttempt(req, attemptId);
   }
   const user = await prisma.user.findUniqueOrThrow({ where: { id: a.userId }, select: { fullName: true, username: true, department: true } });
   const snap = a.examSnapshot as unknown as ExamSnapshot;
@@ -201,7 +221,7 @@ export async function getAttemptForCandidate(req: FastifyRequest, attemptId: str
 // ───────────── Autosave ─────────────
 
 export async function saveAnswer(req: FastifyRequest, attemptId: string, input: { attemptQuestionId: string; selectedOptionIds?: string[]; numericValue?: number | null; flagged?: boolean }) {
-  const a = await ownAttempt(attemptId, req.user!.id);
+  const a = await ownAttempt(req, attemptId);
   if (a.status !== 'IN_PROGRESS') throw new AppError(409, 'Bài thi đã được nộp. Không thể thay đổi câu trả lời.', 'SUBMITTED');
   if (Date.now() > a.deadlineAt.getTime() + GRACE_MS) {
     await submitAttempt(null, a.id, true);

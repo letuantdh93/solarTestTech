@@ -88,7 +88,8 @@ describe('Phase 5 – results, analytics and reports', () => {
     const ws = wb.getWorksheet('Kết quả thi')!;
     expect(ws.getRow(1).getCell(3).value).toBe('Thí sinh');
     expect(ws.rowCount).toBe(3);
-    expect(['Đạt', 'Chưa đạt']).toContain(ws.getRow(2).getCell(13).value);
+    expect(['Đạt', 'Chưa đạt']).toContain(ws.getRow(2).getCell(14).value);
+    expect(ws.getRow(1).getCell(4).value).toBe('Số điện thoại');
     expect(wb.getWorksheet('Năng lực theo lĩnh vực')).toBeTruthy();
     expect((await c1.get('/api/results/export.xlsx')).statusCode).toBe(403);
   });

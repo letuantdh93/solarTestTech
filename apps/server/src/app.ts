@@ -20,6 +20,7 @@ import { examsRoutes } from './modules/exams/exams.routes';
 import { attemptsRoutes } from './modules/attempts/attempts.routes';
 import { resultsRoutes } from './modules/results/results.routes';
 import { aiRoutes } from './modules/ai/ai.routes';
+import { publicRoutes } from './modules/public/public.routes';
 
 export async function buildApp(opts: { logger?: boolean } = {}): Promise<FastifyInstance> {
   const app = Fastify({
@@ -99,6 +100,7 @@ export async function buildApp(opts: { logger?: boolean } = {}): Promise<Fastify
       await api.register(attemptsRoutes);
       await api.register(resultsRoutes);
       await api.register(aiRoutes);
+      await api.register(publicRoutes);
     },
     { prefix: '/api' },
   );

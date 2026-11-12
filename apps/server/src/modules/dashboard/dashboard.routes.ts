@@ -67,7 +67,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
       out.author = { byStatus: Object.fromEntries(mine.map((s) => [s.status, s._count._all])) };
     }
 
-    if (hasPerm(req, 'exams.take')) {
+    if (hasPerm(req, 'exams.take') && !u.isGuest) {
       const results = await prisma.examinationResult.findMany({
         where: { userId: u.id },
         orderBy: { createdAt: 'asc' },

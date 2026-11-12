@@ -38,7 +38,7 @@ export interface ResultDetail {
 export default function ResultPage() {
   const { attemptId } = useParams();
   const { t } = useT();
-  const { can } = useAuth();
+  const { can, me } = useAuth();
   const reduce = useReducedMotion();
   const { data, isLoading } = useGet<ResultDetail>(['result', attemptId], `/results/attempts/${attemptId}`);
   const [filter, setFilter] = useState<'all' | 'incorrect' | 'unanswered' | 'correct'>('all');
@@ -51,7 +51,7 @@ export default function ResultPage() {
   }, [data, filter]);
 
   if (isLoading || !data) return <div className="space-y-4"><Skeleton className="h-64 rounded-xl" /><Skeleton className="h-80 rounded-xl" /></div>;
-  const back = can('results.view_all') ? '/ket-qua' : '/ket-qua-cua-toi';
+  const back = me?.isGuest ? '/vao-thi' : can('results.view_all') ? '/ket-qua' : '/ket-qua-cua-toi';
   if (data.pending) return <EmptyState icon={<Clock className="h-7 w-7" />} title={t('ui.attemptPending')} />;
 
   const s = data.summary;

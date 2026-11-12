@@ -19,12 +19,12 @@ export function resultWhere(f: ResultFilter): Prisma.ExaminationResultWhereInput
     ...(f.groupId ? { user: { groups: { some: { groupId: f.groupId } } } } : {}),
     ...(f.passed !== undefined ? { passed: f.passed } : {}),
     ...(f.from || f.to ? { createdAt: { ...(f.from ? { gte: f.from } : {}), ...(f.to ? { lte: f.to } : {}) } } : {}),
-    ...(f.q ? { OR: [{ user: { fullName: { contains: f.q, mode: 'insensitive' } } }, { user: { username: { contains: f.q, mode: 'insensitive' } } }, { examination: { name: { contains: f.q, mode: 'insensitive' } } }] } : {}),
+    ...(f.q ? { OR: [{ user: { fullName: { contains: f.q, mode: 'insensitive' } } }, { user: { username: { contains: f.q, mode: 'insensitive' } } }, { user: { phone: { contains: f.q } } }, { user: { department: { contains: f.q, mode: 'insensitive' } } }, { examination: { name: { contains: f.q, mode: 'insensitive' } } }] } : {}),
   };
 }
 
 export const resultRowInclude = {
-  user: { select: { id: true, fullName: true, username: true, department: true, position: true } },
+  user: { select: { id: true, fullName: true, username: true, phone: true, isGuest: true, department: true, position: true } },
   examination: { select: { id: true, code: true, name: true } },
   attempt: { select: { attemptNo: true, status: true, startedAt: true, submittedAt: true } },
 } satisfies Prisma.ExaminationResultInclude;

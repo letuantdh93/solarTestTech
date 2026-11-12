@@ -79,7 +79,7 @@ function bucketTable(buckets: Bucket[], labelHeader: string, labelOf: (b: Bucket
 
 export interface ResultPdfData {
   exam: { name: string; code: string; passingScore: number; durationMinutes: number };
-  candidate: { fullName: string; username: string; department: string | null; position: string | null };
+  candidate: { fullName: string; username: string; phone?: string | null; department: string | null; position: string | null };
   attemptNo: number;
   submittedAt: Date | string | null;
   status: string;
@@ -98,6 +98,7 @@ export function resultPdf(d: ResultPdfData) {
         { width: '*', stack: [
           { text: [{ text: 'Thí sinh: ', style: 'muted' }, { text: d.candidate.fullName, bold: true }] },
           { text: [{ text: 'Đơn vị: ', style: 'muted' }, `${d.candidate.department ?? '—'}${d.candidate.position ? ' · ' + d.candidate.position : ''}`] },
+          ...(d.candidate.phone ? [{ text: [{ text: 'Số điện thoại: ', style: 'muted' }, d.candidate.phone] }] : []),
           { text: [{ text: 'Lần thi: ', style: 'muted' }, String(d.attemptNo)] },
           { text: [{ text: 'Thời điểm nộp: ', style: 'muted' }, dt(d.submittedAt), d.status === 'AUTO_SUBMITTED' ? ' (tự động nộp khi hết giờ)' : ''] },
         ] },
@@ -201,6 +202,7 @@ export async function resultsExcel(rows: Array<ReturnType<typeof serializeResult
     { header: 'Mã đề', key: 'code', width: 14 },
     { header: 'Đề thi', key: 'exam', width: 36 },
     { header: 'Thí sinh', key: 'name', width: 24 },
+    { header: 'Số điện thoại', key: 'phone', width: 14 },
     { header: 'Tên đăng nhập', key: 'username', width: 16 },
     { header: 'Phòng ban', key: 'dept', width: 20 },
     { header: 'Lần thi', key: 'attemptNo', width: 8 },
@@ -216,7 +218,7 @@ export async function resultsExcel(rows: Array<ReturnType<typeof serializeResult
   header(ws);
   for (const r of rows) {
     const row = ws.addRow({
-      code: r.exam.code, exam: r.exam.name, name: r.user.fullName, username: r.user.username, dept: r.user.department ?? '',
+      code: r.exam.code, exam: r.exam.name, name: r.user.fullName, phone: r.user.phone ?? '', username: r.user.isGuest ? '' : r.user.username, dept: r.user.department ?? '',
       attemptNo: r.attemptNo, submittedAt: r.submittedAt ? new Date(r.submittedAt) : null, score: r.scorePercent, correct: r.correctCount,
       incorrect: r.incorrectCount, unanswered: r.unansweredCount, minutes: Math.round((r.durationSeconds / 60) * 10) / 10,
       result: r.passed ? 'Đạt' : 'Chưa đạt', status: r.status === 'AUTO_SUBMITTED' ? 'Tự động (hết giờ)' : 'Thí sinh nộp',
@@ -225,15 +227,15 @@ export async function resultsExcel(rows: Array<ReturnType<typeof serializeResult
     row.getCell('score').numFmt = '0.0';
     row.getCell('result').font = { bold: true, color: { argb: r.passed ? 'FF16A34A' : 'FFDC2626' } };
   }
-  ws.autoFilter = { from: 'A1', to: 'N1' };
+  ws.autoFilter = { from: 'A1', to: 'O1' };
 
   // Competency matrix per candidate attempt
   const codes = [...new Set(rows.flatMap((r) => r.byCategory.map((b) => `${b.code}|${b.label}`)))].sort();
   const cs = wb.addWorksheet('Năng lực theo lĩnh vực');
-  cs.columns = [{ header: 'Thí sinh', key: 'name', width: 24 }, { header: 'Đề thi', key: 'exam', width: 30 }, ...codes.map((c) => ({ header: `${c.split('|')[0]}. ${c.split('|')[1]} (%)`, key: c, width: 18 }))];
+  cs.columns = [{ header: 'Thí sinh', key: 'name', width: 24 }, { header: 'Số điện thoại', key: 'phone', width: 14 }, { header: 'Phòng ban', key: 'dept', width: 20 }, { header: 'Đề thi', key: 'exam', width: 30 }, ...codes.map((c) => ({ header: `${c.split('|')[0]}. ${c.split('|')[1]} (%)`, key: c, width: 18 }))];
   header(cs);
   for (const r of rows) {
-    const rec: Record<string, unknown> = { name: r.user.fullName, exam: r.exam.name };
+    const rec: Record<string, unknown> = { name: r.user.fullName, phone: r.user.phone ?? '', dept: r.user.department ?? '', exam: r.exam.name };
     for (const b of r.byCategory) rec[`${b.code}|${b.label}`] = b.percent;
     cs.addRow(rec);
   }

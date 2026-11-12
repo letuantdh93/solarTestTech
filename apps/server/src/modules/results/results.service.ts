@@ -3,7 +3,7 @@ import { prisma } from '../../db';
 import { hasPerm } from '../../lib/auth';
 import { forbidden, notFound } from '../../lib/errors';
 import { dec } from '../../lib/http';
-import type { ExamSnapshot } from '../attempts/attempts.service';
+import { canAccessAttempt, type ExamSnapshot } from '../attempts/attempts.service';
 import type { Bucket, QuestionSnapshot } from './scoring';
 
 /** Technical weakness analysis derived from category buckets. */
@@ -20,13 +20,13 @@ export async function getResultDetail(req: FastifyRequest, attemptId: string) {
     where: { id: attemptId },
     include: {
       result: true,
-      user: { select: { id: true, fullName: true, username: true, department: true, position: true } },
+      user: { select: { id: true, fullName: true, username: true, phone: true, isGuest: true, department: true, position: true } },
       examination: { select: { id: true, status: true, endAt: true } },
     },
   });
   if (!a) throw notFound('Không tìm thấy kết quả');
   const staff = hasPerm(req, 'results.view_all');
-  const own = a.userId === req.user!.id && hasPerm(req, 'results.view_own');
+  const own = canAccessAttempt(req, a) && hasPerm(req, 'results.view_own');
   if (!staff && !own) throw forbidden();
   if (a.status === 'IN_PROGRESS' || !a.result) return { attemptId: a.id, status: a.status, pending: true };
 

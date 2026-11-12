@@ -10,6 +10,7 @@ export interface Me {
   role: RoleCode;
   permissions: Permission[];
   mustChangePassword: boolean;
+  isGuest: boolean;
 }
 
 interface AuthCtx {
