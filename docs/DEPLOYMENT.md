@@ -19,6 +19,8 @@ The application is a single Node.js process. It serves the REST API under `/api`
 | `AI_MODEL` | no | default `claude-opus-5-5` (can also be changed in Cấu hình hệ thống) |
 | `AI_PROVIDER` | no | `anthropic` (default) or `mock` (tests/demos) |
 
+The Prisma client is generated automatically on `pnpm install` (postinstall) and again before `db:deploy`, `db:seed`, `dev` and `build`. You can also run `pnpm db:generate` by hand, for example after copying `node_modules` from elsewhere.
+
 All `pnpm` commands (`db:deploy`, `db:seed`, `start`, …) read the **project-root `.env`** automatically through `apps/server/scripts/with-env.mjs`. Variables already set in the shell take precedence. If `DATABASE_URL` is missing, the command stops with an explanatory message.
 
 ### Server with another PostgreSQL already on port 5432

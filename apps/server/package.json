@@ -4,17 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/with-env.mjs tsx watch src/index.ts",
-    "build": "tsup",
+    "dev": "prisma generate && node scripts/with-env.mjs tsx watch src/index.ts",
+    "build": "prisma generate && tsup",
     "start": "node scripts/with-env.mjs node dist/index.js",
     "prisma:migrate": "node scripts/with-env.mjs prisma migrate dev",
-    "prisma:deploy": "node scripts/with-env.mjs prisma migrate deploy",
-    "prisma:generate": "node scripts/with-env.mjs prisma generate",
-    "seed": "node scripts/with-env.mjs tsx prisma/seed.ts",
+    "prisma:deploy": "prisma generate && node scripts/with-env.mjs prisma migrate deploy",
+    "prisma:generate": "prisma generate",
+    "seed": "prisma generate && node scripts/with-env.mjs tsx prisma/seed.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p .",
-    "seed:demo": "node scripts/with-env.mjs tsx prisma/seed-demo-results.ts",
-    "prisma:status": "node scripts/with-env.mjs prisma migrate status"
+    "seed:demo": "prisma generate && node scripts/with-env.mjs tsx prisma/seed-demo-results.ts",
+    "prisma:status": "node scripts/with-env.mjs prisma migrate status",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.7.0",
