@@ -6,7 +6,9 @@ The application is a single Node.js process. It serves the REST API under `/api`
 
 | Variable | Required | Notes |
 |---|---|---|
-| `DATABASE_URL` | yes | `postgresql://user:pass@host:5432/solar_exam?schema=public` |
+| `DATABASE_URL` | yes | `postgresql://solar:<password>@127.0.0.1:5544/solar_exam?schema=public`. The port must equal `DB_PORT` when using the bundled Docker PostgreSQL |
+| `DB_PORT` | no | host port of the bundled PostgreSQL container (default **5544**, so it does not clash with another PostgreSQL on 5432) |
+| `POSTGRES_PASSWORD` | no | password of the bundled PostgreSQL container (must match `DATABASE_URL`) |
 | `PORT` / `HOST` | no | default `2112` / `0.0.0.0` |
 | `SESSION_TTL_HOURS` | no | sliding session lifetime (default 12) |
 | `COOKIE_SECURE` | prod: yes | set `true` behind HTTPS (also enables HSTS) |
@@ -16,6 +18,12 @@ The application is a single Node.js process. It serves the REST API under `/api`
 | `ANTHROPIC_API_KEY` | no | enables the AI assistant |
 | `AI_MODEL` | no | default `claude-opus-5-5` (can also be changed in Cấu hình hệ thống) |
 | `AI_PROVIDER` | no | `anthropic` (default) or `mock` (tests/demos) |
+
+All `pnpm` commands (`db:deploy`, `db:seed`, `start`, …) read the **project-root `.env`** automatically through `apps/server/scripts/with-env.mjs`. Variables already set in the shell take precedence. If `DATABASE_URL` is missing, the command stops with an explanatory message.
+
+### Server with another PostgreSQL already on port 5432
+
+The bundled database publishes `127.0.0.1:${DB_PORT}` (default 5544) and never uses the host's 5432. Inside Docker, the `app` service always connects to `db:5432`; that port is internal to the container network, so do not change it. To use your **existing** PostgreSQL instead, skip `pnpm db:up` and point `DATABASE_URL` at it. The user needs permission to create the `pg_trgm` extension, or the extension must be created beforehand.
 
 ## Option A: Docker Compose (recommended)
 

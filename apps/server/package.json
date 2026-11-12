@@ -4,16 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "dev": "node scripts/with-env.mjs tsx watch src/index.ts",
     "build": "tsup",
-    "start": "node --env-file-if-exists=../../.env dist/index.js",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy",
-    "prisma:generate": "prisma generate",
-    "seed": "tsx --env-file=../../.env prisma/seed.ts",
+    "start": "node scripts/with-env.mjs node dist/index.js",
+    "prisma:migrate": "node scripts/with-env.mjs prisma migrate dev",
+    "prisma:deploy": "node scripts/with-env.mjs prisma migrate deploy",
+    "prisma:generate": "node scripts/with-env.mjs prisma generate",
+    "seed": "node scripts/with-env.mjs tsx prisma/seed.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p .",
-    "seed:demo": "tsx --env-file=../../.env prisma/seed-demo-results.ts"
+    "seed:demo": "node scripts/with-env.mjs tsx prisma/seed-demo-results.ts",
+    "prisma:status": "node scripts/with-env.mjs prisma migrate status"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.7.0",

@@ -8,7 +8,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-solar_dev_pw}
       POSTGRES_DB: solar_exam
     ports:
-      - "127.0.0.1:5544:5432"
+      # Host port is configurable (DB_PORT in .env); 5432 is only the port INSIDE the container.
+      - "127.0.0.1:${DB_PORT:-5544}:5432"
     volumes:
       - solar_exam_pg:/var/lib/postgresql/data
     healthcheck:
@@ -26,6 +27,8 @@ services:
     env_file: .env
     environment:
       NODE_ENV: production
+      # Container-to-container connection inside the Docker network: always db:5432
+      # (unrelated to the host port DB_PORT and to any other PostgreSQL on the server).
       DATABASE_URL: postgresql://solar:${POSTGRES_PASSWORD:-solar_dev_pw}@db:5432/solar_exam?schema=public
       UPLOAD_DIR: /data/uploads
     ports:

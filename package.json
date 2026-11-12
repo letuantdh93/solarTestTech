@@ -8,6 +8,7 @@
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @solar/server prisma:migrate",
     "db:deploy": "pnpm --filter @solar/server prisma:deploy",
+    "db:status": "pnpm --filter @solar/server prisma:status",
     "db:seed": "pnpm --filter @solar/server seed",
     "dev": "pnpm -r --parallel --filter @solar/server --filter @solar/web dev",
     "build": "pnpm --filter @solar/shared build && pnpm --filter @solar/web build && pnpm --filter @solar/server build",

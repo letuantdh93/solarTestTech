@@ -10,7 +10,7 @@ case "$1" in
     sleep 1 ;;
   start)
     "$0" stop
-    cd "$ROOT/apps/server" && nohup node --import tsx --env-file=../../.env src/index.ts > "$LOG" 2>&1 &
+    cd "$ROOT/apps/server" && nohup node scripts/with-env.mjs node --import tsx src/index.ts > "$LOG" 2>&1 &
     echo $! > "$PIDF"
     for i in $(seq 1 30); do curl -sf http://127.0.0.1:2112/api/health >/dev/null && { echo "server up (pid $(cat "$PIDF"))"; exit 0; }; sleep 0.5; done
     echo "server failed to start"; tail -20 "$LOG"; exit 1 ;;

@@ -10,8 +10,10 @@ Type=simple
 User=solar
 WorkingDirectory=/opt/solar-exam/apps/server
 Environment=NODE_ENV=production
-ExecStartPre=/usr/bin/env npx prisma migrate deploy
-ExecStart=/usr/bin/node --env-file=/opt/solar-exam/.env dist/index.js
+# Loads DATABASE_URL etc. from the project .env
+EnvironmentFile=/opt/solar-exam/.env
+ExecStartPre=/opt/solar-exam/apps/server/node_modules/.bin/prisma migrate deploy
+ExecStart=/usr/bin/node dist/index.js
 Restart=on-failure
 RestartSec=5
 # Hardening
