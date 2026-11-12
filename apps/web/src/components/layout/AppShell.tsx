@@ -10,6 +10,7 @@ import { useT } from '@/i18n';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/format';
 import { useTheme } from '@/hooks/useTheme';
+import { BrandLogo } from '@/components/BrandLogo';
 
 interface NavItem {
   to: string;
@@ -65,9 +66,7 @@ function SolarLogo({ compact }: { compact?: boolean }) {
   const { t } = useT();
   return (
     <div className="flex items-center gap-2.5">
-      <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-solar to-warning shadow-lg shadow-solar/20">
-        <Sun className="h-5 w-5 text-white" strokeWidth={2.4} />
-      </div>
+      <BrandLogo size={38} />
       {!compact && (
         <div className="min-w-0 leading-tight">
           <p className="truncate text-sm font-bold text-white">{t('app.short')}</p>

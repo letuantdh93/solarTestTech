@@ -87,6 +87,9 @@ async function main() {
         const start = new Date();
         start.setMonth(start.getMonth() - monthsAgo, 8 + Math.floor(rand() * 18));
         start.setHours(8 + Math.floor(rand() * 8), Math.floor(rand() * 60), 0, 0);
+        // Never date demo history in the future.
+        const latest = Date.now() - 2 * 3600_000 - bp.durationMinutes * 60_000;
+        if (start.getTime() > latest) start.setTime(latest - Math.floor(rand() * 5) * 86_400_000);
         const result = await prisma.examinationResult.findUniqueOrThrow({ where: { attemptId: a.id } });
         const usedSec = Math.round(bp.durationMinutes * 60 * (0.55 + rand() * 0.4));
         const end = new Date(start.getTime() + usedSec * 1000);

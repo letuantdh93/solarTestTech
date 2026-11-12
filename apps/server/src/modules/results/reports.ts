@@ -3,6 +3,9 @@
  * VFS, which includes full Vietnamese glyph coverage.
  */
 import { createRequire } from 'node:module';
+import fs from 'node:fs';
+import path from 'node:path';
+import { ROOT_DIR } from '../../config';
 import ExcelJS from 'exceljs';
 import type { TDocumentDefinitions, Content, TableCell } from 'pdfmake/interfaces';
 import type { CompetencyLevel } from '@solar/shared';
@@ -18,6 +21,16 @@ const font = (n: string) => Buffer.from(vfs[n]!, 'base64');
 const printer = new PdfPrinter({
   Roboto: { normal: font('Roboto-Regular.ttf'), bold: font('Roboto-Medium.ttf'), italics: font('Roboto-Italic.ttf'), bolditalics: font('Roboto-MediumItalic.ttf') },
 });
+
+// Company logo for report headers (optional – reports still render without it).
+const LOGO_PATH = path.join(ROOT_DIR, 'apps/server/assets/logo.png');
+const LOGO = fs.existsSync(LOGO_PATH) ? `data:image/png;base64,${fs.readFileSync(LOGO_PATH).toString('base64')}` : null;
+function brandHeader(title: string, subtitle: string): Content {
+  const text = { stack: [{ text: title, style: 'h1' }, { text: subtitle, margin: [0, 4, 0, 0] }], width: '*' } as Content;
+  return LOGO
+    ? { columns: [{ image: LOGO, fit: [46, 46], width: 56 }, text], columnGap: 10, margin: [0, 0, 0, 12] }
+    : { ...(text as object), margin: [0, 0, 0, 12] } as Content;
+}
 
 export const LEVEL_VI: Record<CompetencyLevel, string> = { EXCELLENT: 'Xuất sắc', GOOD: 'Tốt', NEEDS_IMPROVEMENT: 'Cần cải thiện', WEAK: 'Yếu' };
 const DIFF_VI: Record<string, string> = { 1: 'Cơ bản', 2: 'Trung bình', 3: 'Nâng cao', 4: 'Chuyên gia' };
@@ -79,8 +92,7 @@ export interface ResultPdfData {
 export function resultPdf(d: ResultPdfData) {
   const s = d.summary;
   const content: Content[] = [
-    { text: 'BÁO CÁO KẾT QUẢ SÁT HẠCH KỸ THUẬT', style: 'h1' },
-    { text: `${d.exam.name} (${d.exam.code})`, margin: [0, 4, 0, 12] },
+    brandHeader('BÁO CÁO KẾT QUẢ SÁT HẠCH KỸ THUẬT', `${d.exam.name} (${d.exam.code})`),
     {
       columns: [
         { width: '*', stack: [
@@ -133,8 +145,7 @@ export function resultPdf(d: ResultPdfData) {
 
 export function analyticsPdf(title: string, a: Awaited<ReturnType<typeof analytics>>) {
   const content: Content[] = [
-    { text: 'BÁO CÁO PHÂN TÍCH NĂNG LỰC', style: 'h1' },
-    { text: title, margin: [0, 4, 0, 10] },
+    brandHeader('BÁO CÁO PHÂN TÍCH NĂNG LỰC', title),
     {
       table: {
         widths: ['*', '*', '*', '*'],

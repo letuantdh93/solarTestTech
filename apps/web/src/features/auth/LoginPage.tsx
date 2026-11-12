@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BarChart3, Lock, ShieldCheck, Sun, User, Wand2 } from 'lucide-react';
+import { BarChart3, Lock, ShieldCheck, User, Wand2 } from 'lucide-react';
+import { BrandLogo } from '@/components/BrandLogo';
 import { useQueryClient } from '@tanstack/react-query';
 import { useT } from '@/i18n';
 import { api, ApiError } from '@/lib/api';
@@ -74,11 +75,9 @@ export function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
       <div className="relative hidden overflow-hidden bg-sidebar lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_400px_at_80%_10%,rgba(245,158,11,0.18),transparent),radial-gradient(700px_500px_at_10%_90%,rgba(37,99,235,0.25),transparent)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_400px_at_80%_10%,rgba(132,189,63,0.16),transparent),radial-gradient(700px_500px_at_10%_90%,rgba(11,74,128,0.45),transparent)]" />
         <div className="relative flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-solar to-warning shadow-lg shadow-solar/30">
-            <Sun className="h-6 w-6 text-white" strokeWidth={2.4} />
-          </div>
+          <BrandLogo size={52} />
           <div>
             <p className="font-bold text-white">{t('app.short')}</p>
             <p className="text-xs text-sidebar-muted">{t('app.subtitle')}</p>
@@ -113,9 +112,7 @@ export function LoginPage() {
           noValidate
         >
           <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-solar to-warning">
-              <Sun className="h-5 w-5 text-white" />
-            </div>
+            <BrandLogo size={44} />
             <p className="font-bold">{t('app.short')}</p>
           </div>
           <h2 className="text-2xl font-bold">{t('auth.welcome')}</h2>

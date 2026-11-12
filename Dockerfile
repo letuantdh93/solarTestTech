@@ -9,7 +9,7 @@ COPY packages/shared/package.json packages/shared/
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm --filter @solar/server exec prisma generate && pnpm build && pnpm --filter @solar/server deploy --prod --legacy /out \
- && cp -r apps/server/dist apps/server/prisma /out/ && mkdir -p /out/web && cp -r apps/web/dist /out/web/dist
+ && cp -r apps/server/dist apps/server/prisma apps/server/assets /out/ && mkdir -p /out/web && cp -r apps/web/dist /out/web/dist
 
 FROM node:22-bookworm-slim
 ENV NODE_ENV=production PORT=2112 HOST=0.0.0.0 UPLOAD_DIR=/data/uploads
