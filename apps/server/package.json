@@ -1,0 +1,43 @@
+{
+  "name": "@solar/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "build": "tsup",
+    "start": "node --env-file-if-exists=../../.env dist/index.js",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:generate": "prisma generate",
+    "seed": "tsx --env-file=../../.env prisma/seed.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p .",
+    "seed:demo": "tsx --env-file=../../.env prisma/seed-demo-results.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.7.0",
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/multipart": "^9.4.0",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/static": "^8.3.0",
+    "@prisma/client": "^6.19.3",
+    "@solar/shared": "workspace:*",
+    "argon2": "^0.41.1",
+    "exceljs": "^4.4.0",
+    "fastify": "^5.12.8",
+    "fastify-plugin": "^5.1.0",
+    "pdfmake": "^0.2.23",
+    "zod": "^3.25.76",
+    "prisma": "^6.19.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/pdfmake": "^0.3.3",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}

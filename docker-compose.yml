@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: solar_exam_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: solar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-solar_dev_pw}
+      POSTGRES_DB: solar_exam
+    ports:
+      - "127.0.0.1:5544:5432"
+    volumes:
+      - solar_exam_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solar -d solar_exam"]
+      interval: 5s
+      retries: 10
+  app:
+    profiles: ["app"]
+    build: .
+    container_name: solar_exam_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://solar:${POSTGRES_PASSWORD:-solar_dev_pw}@db:5432/solar_exam?schema=public
+      UPLOAD_DIR: /data/uploads
+    ports:
+      - "2112:2112"
+    volumes:
+      - solar_exam_uploads:/data/uploads
+volumes:
+  solar_exam_pg:
+  solar_exam_uploads:

@@ -1,0 +1,22 @@
+{
+  "name": "solar-exam-platform",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@12.9.1",
+  "scripts": {
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @solar/server prisma:migrate",
+    "db:deploy": "pnpm --filter @solar/server prisma:deploy",
+    "db:seed": "pnpm --filter @solar/server seed",
+    "dev": "pnpm -r --parallel --filter @solar/server --filter @solar/web dev",
+    "build": "pnpm --filter @solar/shared build && pnpm --filter @solar/web build && pnpm --filter @solar/server build",
+    "start": "pnpm --filter @solar/server start",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "db:seed-demo": "pnpm --filter @solar/server seed:demo"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0"
+  }
+}

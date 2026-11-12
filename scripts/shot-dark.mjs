@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test';
+const [out] = process.argv.slice(2);
+const base = process.env.BASE_URL ?? 'http://127.0.0.1:2112';
+const b = await chromium.launch();
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark', reducedMotion: 'reduce' });
+const p = await ctx.newPage();
+await p.goto(base + '/dang-nhap');
+await p.getByLabel('Tên đăng nhập').fill('quanly'); await p.getByLabel('Mật khẩu').fill('Demo@123456');
+await p.getByRole('button', { name: 'Đăng nhập' }).click(); await p.waitForURL((u) => !u.pathname.startsWith('/dang-nhap'));
+await p.goto(base + '/'); await p.waitForLoadState('networkidle'); await p.waitForTimeout(1500);
+await p.screenshot({ path: `${out}/dark-dashboard.png` });
+await b.close();

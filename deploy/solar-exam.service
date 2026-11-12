@@ -1,0 +1,24 @@
+# systemd unit – copy to /etc/systemd/system/solar-exam.service, adjust paths/user, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now solar-exam
+[Unit]
+Description=Solar PV Examination Platform (port 2112)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=solar
+WorkingDirectory=/opt/solar-exam/apps/server
+Environment=NODE_ENV=production
+ExecStartPre=/usr/bin/env npx prisma migrate deploy
+ExecStart=/usr/bin/node --env-file=/opt/solar-exam/.env dist/index.js
+Restart=on-failure
+RestartSec=5
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/solar-exam/uploads
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

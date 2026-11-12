@@ -1,0 +1,170 @@
+@import '@fontsource/be-vietnam-pro/vietnamese-400.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-500.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-600.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-700.css';
+@import '@fontsource/be-vietnam-pro/latin-400.css';
+@import '@fontsource/be-vietnam-pro/latin-500.css';
+@import '@fontsource/be-vietnam-pro/latin-600.css';
+@import '@fontsource/be-vietnam-pro/latin-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import 'katex/dist/katex.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens (RGB triplets) ── */
+:root {
+  --bg: 244 246 250;
+  --surface: 255 255 255;
+  --surface-2: 248 250 252;
+  --border: 226 232 240;
+  --fg: 15 23 42;
+  --muted: 71 85 105;
+  --subtle: 148 163 184;
+  --primary: 37 99 235;
+  --primary-fg: 255 255 255;
+  --primary-soft: 219 234 254;
+  --solar: 245 158 11;
+  --solar-soft: 254 243 199;
+  --success: 22 163 74;
+  --success-soft: 220 252 231;
+  --danger: 220 38 38;
+  --danger-soft: 254 226 226;
+  --warning: 234 88 12;
+  --warning-soft: 255 237 213;
+  --info: 2 132 199;
+  --info-soft: 224 242 254;
+  --sidebar: 11 19 36;
+  --sidebar-fg: 226 232 240;
+  --sidebar-muted: 125 141 166;
+  --sidebar-active: 30 45 76;
+  color-scheme: light;
+}
+.dark {
+  --bg: 8 13 24;
+  --surface: 15 22 38;
+  --surface-2: 20 29 48;
+  --border: 36 48 72;
+  --fg: 226 232 240;
+  --muted: 160 174 196;
+  --subtle: 100 116 139;
+  --primary: 77 141 255;
+  --primary-fg: 255 255 255;
+  --primary-soft: 23 42 82;
+  --solar: 251 191 36;
+  --solar-soft: 66 46 10;
+  --success: 52 211 113;
+  --success-soft: 14 52 33;
+  --danger: 248 98 98;
+  --danger-soft: 66 20 24;
+  --warning: 251 146 60;
+  --warning-soft: 67 36 14;
+  --info: 56 189 248;
+  --info-soft: 12 48 70;
+  --sidebar: 6 10 20;
+  --sidebar-fg: 226 232 240;
+  --sidebar-muted: 110 126 152;
+  --sidebar-active: 24 36 62;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    font-feature-settings: 'tnum' 0;
+    background-image:
+      radial-gradient(1200px 600px at 100% -10%, rgb(var(--primary) / 0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgb(var(--solar) / 0.05), transparent 60%);
+    background-attachment: fixed;
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+  h1, h2, h3 {
+    @apply tracking-tight;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-border bg-surface shadow-card;
+  }
+  .card-hover {
+    @apply transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-lift hover:border-primary/30;
+  }
+  .input {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg placeholder:text-subtle
+      transition-[border-color,box-shadow] duration-150 focus:border-primary focus:shadow-glow focus:outline-none
+      disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-fg;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-surface-2;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background: linear-gradient(90deg, transparent, rgb(var(--border) / 0.7), transparent);
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--border)) transparent;
+  }
+}
+
+/* ── Rich question content ── */
+.prose-tech {
+  @apply text-[15px] leading-7 text-fg;
+}
+.prose-tech p {
+  @apply my-2;
+}
+.prose-tech ul {
+  @apply my-2 list-disc pl-6;
+}
+.prose-tech ol {
+  @apply my-2 list-decimal pl-6;
+}
+.prose-tech strong {
+  @apply font-semibold;
+}
+.prose-tech code {
+  @apply rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[13px];
+}
+.prose-tech table {
+  @apply my-3 block w-full overflow-x-auto border-collapse text-sm md:table;
+}
+.prose-tech th {
+  @apply border border-border bg-surface-2 px-3 py-1.5 text-left font-semibold;
+}
+.prose-tech td {
+  @apply border border-border px-3 py-1.5 num;
+}
+.prose-tech .katex-display {
+  @apply my-3 overflow-x-auto overflow-y-hidden py-1;
+}
+.prose-tech .katex {
+  font-size: 1.05em;
+}
+.prose-tech img {
+  @apply my-3 max-h-[420px] rounded-lg border border-border;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
